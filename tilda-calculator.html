@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МФО Калькулятор</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #dbeafe 0%, #dcfce7 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #111827;
+            margin: 0;
+        }
+
+        .header-subtitle {
+            color: #6b7280;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 32px 16px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+            color: white;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-header.secondary {
+            background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .card-content {
+            padding: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 32px;
+        }
+
+        .form-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .form-label-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .form-label-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3b82f6;
+        }
+
+        .form-label-value.secondary {
+            color: #10b981;
+        }
+
+        .slider-container {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #e5e7eb;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .results {
+            background: linear-gradient(135deg, #dbeafe 0%, #dcfce7 100%);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        @media (min-width: 640px) {
+            .results-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .result-item {
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
+        .result-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .result-value.orange {
+            color: #ea580c;
+        }
+
+        .total-result {
+            text-align: center;
+            padding-top: 16px;
+            border-top: 1px solid #d1d5db;
+        }
+
+        .total-result .result-value {
+            font-size: 24px;
+            color: #3b82f6;
+        }
+
+        .apply-button {
+            width: 100%;
+            padding: 24px;
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .apply-button:hover {
+            opacity: 0.9;
+        }
+
+        .conditions-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        @media (min-width: 640px) {
+            .conditions-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .condition-card {
+            background: #dbeafe;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .condition-card.green {
+            background: #dcfce7;
+        }
+
+        .condition-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .condition-icon.blue {
+            color: #3b82f6;
+        }
+
+        .condition-icon.green {
+            color: #10b981;
+        }
+
+        .condition-label {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
+        .condition-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .condition-sub {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .accordion {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .accordion-item:last-child {
+            border-bottom: none;
+        }
+
+        .accordion-trigger {
+            width: 100%;
+            padding: 16px;
+            background: white;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .accordion-trigger:hover {
+            background: #f9fafb;
+        }
+
+        .accordion-content {
+            padding: 0 16px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .accordion-content.open {
+            max-height: 500px;
+            padding: 16px;
+        }
+
+        .requirement-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .requirement-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .check-icon {
+            color: #10b981;
+            font-size: 16px;
+        }
+
+        .process-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .process-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            background: #3b82f6;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .security-card {
+            background: linear-gradient(135deg, #dcfce7 0%, #dbeafe 100%);
+            border: 1px solid #10b981;
+            border-radius: 8px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .security-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .security-icon {
+            color: #10b981;
+            font-size: 24px;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+
+        .security-title {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .security-text {
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .footer {
+            background: #111827;
+            color: white;
+            padding: 32px 0;
+            margin-top: 64px;
+            text-align: center;
+        }
+
+        .footer-text {
+            color: #9ca3af;
+        }
+
+        .footer-subtext {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="header-icon">🧮</div>
+            <div>
+                <h1 class="header-title">МФО Калькулятор</h1>
+                <p class="header-subtitle">Быстрый расчёт займа онлайн</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Calculator -->
+        <div class="card">
+            <div class="card-header">
+                <span>🧮</span>
+                <h2 class="card-title">Калькулятор займа</h2>
+            </div>
+            <div class="card-content">
+                <!-- Amount Slider -->
+                <div class="form-group">
+                    <div class="form-label">
+                        <span class="form-label-text">Сумма займа</span>
+                        <span class="form-label-value" id="amountValue">15 000 ₽</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" class="slider" id="amountSlider" min="1000" max="45000" step="1000" value="15000">
+                    </div>
+                    <div class="slider-labels">
+                        <span>1 000 ₽</span>
+                        <span>45 000 ₽</span>
+                    </div>
+                </div>
+
+                <!-- Term Slider -->
+                <div class="form-group">
+                    <div class="form-label">
+                        <span class="form-label-text">Срок займа</span>
+                        <span class="form-label-value secondary" id="termValue">6 месяцев</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" class="slider" id="termSlider" min="1" max="12" step="1" value="6">
+                    </div>
+                    <div class="slider-labels">
+                        <span>1 месяц</span>
+                        <span>12 месяцев</span>
+                    </div>
+                </div>
+
+                <!-- Results -->
+                <div class="results">
+                    <div class="results-grid">
+                        <div class="result-item">
+                            <p class="result-label">Ежемесячный платёж</p>
+                            <p class="result-value" id="monthlyPayment">2 718 ₽</p>
+                        </div>
+                        <div class="result-item">
+                            <p class="result-label">Переплата</p>
+                            <p class="result-value orange" id="overpayment">1 308 ₽</p>
+                        </div>
+                    </div>
+                    <div class="total-result">
+                        <p class="result-label">Общая сумма к возврату</p>
+                        <p class="result-value" id="totalPayment">16 308 ₽</p>
+                    </div>
+                </div>
+
+                <!-- Apply Button -->
+                <button class="apply-button">
+                    💳 Оформить займ
+                </button>
+            </div>
+        </div>
+
+        <!-- Conditions -->
+        <div>
+            <div class="card">
+                <div class="card-header secondary">
+                    <span>📄</span>
+                    <h2 class="card-title">Условия займа</h2>
+                </div>
+                <div class="card-content">
+                    <div class="conditions-grid">
+                        <div class="condition-card">
+                            <span class="condition-icon blue">%</span>
+                            <p class="condition-label">Ставка</p>
+                            <p class="condition-value">0,04%</p>
+                            <p class="condition-sub">в день</p>
+                        </div>
+                        <div class="condition-card green">
+                            <span class="condition-icon green">⏰</span>
+                            <p class="condition-label">Решение</p>
+                            <p class="condition-value">5 минут</p>
+                            <p class="condition-sub">онлайн</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion">
+                        <div class="accordion-item">
+                            <button class="accordion-trigger" onclick="toggleAccordion('requirements')">
+                                👤 Требования к заёмщику
+                            </button>
+                            <div class="accordion-content" id="requirements">
+                                <div class="requirement-item">
+                                    <span class="check-icon">✓</span>
+                                    <span>Возраст от 18 до 70 лет</span>
+                                </div>
+                                <div class="requirement-item">
+                                    <span class="check-icon">✓</span>
+                                    <span>Гражданство РФ</span>
+                                </div>
+                                <div class="requirement-item">
+                                    <span class="check-icon">✓</span>
+                                    <span>Паспорт РФ</span>
+                                </div>
+                                <div class="requirement-item">
+                                    <span class="check-icon">✓</span>
+                                    <span>Мобильный телефон</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <button class="accordion-trigger" onclick="toggleAccordion('documents')">
+                                📋 Необходимые документы
+                            </button>
+                            <div class="accordion-content" id="documents">
+                                <div class="requirement-item">
+                                    <span class="check-icon">✓</span>
+                                    <span>Паспорт РФ</span>
+                                </div>
+                                <div class="requirement-item">
+                                    <span class="check-icon">✓</span>
+                                    <span>СНИЛС (при наличии)</span>
+                                </div>
+                                <div class="requirement-item">
+                                    <span class="check-icon">✓</span>
+                                    <span>Справка о доходах (не обязательно)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <button class="accordion-trigger" onclick="toggleAccordion('process')">
+                                ⚡ Как получить займ
+                            </button>
+                            <div class="accordion-content" id="process">
+                                <div class="process-step">
+                                    <div class="step-number">1</div>
+                                    <span>Заполните заявку онлайн</span>
+                                </div>
+                                <div class="process-step">
+                                    <div class="step-number">2</div>
+                                    <span>Получите решение за 5 минут</span>
+                                </div>
+                                <div class="process-step">
+                                    <div class="step-number">3</div>
+                                    <span>Деньги на карту в течение 15 минут</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Notice -->
+            <div class="security-card">
+                <div class="security-content">
+                    <span class="security-icon">🛡️</span>
+                    <div>
+                        <h3 class="security-title">Безопасность и надёжность</h3>
+                        <p class="security-text">
+                            Ваши данные защищены SSL-шифрованием. Мы не передаём персональную информацию третьим лицам. 
+                            Лицензия ЦБ РФ №1234567890.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">© 2024 МФО Калькулятор. Все права защищены.</p>
+        <p class="footer-subtext">
+            Займы предоставляются на основании договора займа. Возрастные ограничения 18+
+        </p>
+    </footer>
+
+    <script>
+        // Calculator functionality
+        const amountSlider = document.getElementById('amountSlider');
+        const termSlider = document.getElementById('termSlider');
+        const amountValue = document.getElementById('amountValue');
+        const termValue = document.getElementById('termValue');
+        const monthlyPayment = document.getElementById('monthlyPayment');
+        const overpayment = document.getElementById('overpayment');
+        const totalPayment = document.getElementById('totalPayment');
+
+        const interestRate = 0.0004; // 0.04% daily rate
+
+        function formatMoney(value) {
+            return new Intl.NumberFormat('ru-RU', {
+                style: 'currency',
+                currency: 'RUB',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+            }).format(value);
+        }
+
+        function formatTerm(months) {
+            if (months === 1) return '1 месяц';
+            if (months < 5) return months + ' месяца';
+            return months + ' месяцев';
+        }
+
+        function calculateLoan() {
+            const principal = parseInt(amountSlider.value);
+            const months = parseInt(termSlider.value);
+            const dailyRate = interestRate;
+            const days = months * 30; // Approximate days per month
+            
+            // Calculate total amount with compound interest
+            const totalAmount = principal * Math.pow(1 + dailyRate, days);
+            const monthly = totalAmount / months;
+            const overpay = totalAmount - principal;
+            
+            // Update display
+            amountValue.textContent = formatMoney(principal);
+            termValue.textContent = formatTerm(months);
+            monthlyPayment.textContent = formatMoney(monthly);
+            overpayment.textContent = formatMoney(overpay);
+            totalPayment.textContent = formatMoney(totalAmount);
+        }
+
+        // Event listeners
+        amountSlider.addEventListener('input', calculateLoan);
+        termSlider.addEventListener('input', calculateLoan);
+
+        // Accordion functionality
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const isOpen = content.classList.contains('open');
+            
+            // Close all accordions
+            document.querySelectorAll('.accordion-content').forEach(item => {
+                item.classList.remove('open');
+            });
+            
+            // Open clicked accordion if it was closed
+            if (!isOpen) {
+                content.classList.add('open');
+            }
+        }
+
+        // Initial calculation
+        calculateLoan();
+    </script>
+</body>
+</html>
